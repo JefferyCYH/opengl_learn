@@ -102,6 +102,30 @@ void processInput(GLFWwindow* window)
     {
         camera.speedZ = 0;
     }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        camera.speedX = 0.1f;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        camera.speedX = -0.1f;
+    }
+    else
+    {
+        camera.speedX = 0;
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        camera.speedY = 0.1f;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        camera.speedY = -0.1f;
+    }
+    else
+    {
+        camera.speedY = 0;
+    }
 
 
 
@@ -296,6 +320,8 @@ int main()
         glUniform3f(glGetUniformLocation(testshader->ID, "ambientColor"), 1.0f, 1.0f, 1.0f);
         glUniform3f(glGetUniformLocation(testshader->ID, "lightPos"), 10.0f, 10.0f, 5.0f);
         glUniform3f(glGetUniformLocation(testshader->ID, "lightColor"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(glGetUniformLocation(testshader->ID, "viewPos"), 0, 0, 3.0f);
+        
  
         for (unsigned int i = 0; i < 10; i++)
         {
