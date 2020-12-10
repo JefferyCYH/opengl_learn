@@ -10,31 +10,56 @@ Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture
 
     setupMesh();
 }
-
-void Mesh::Draw(Shader shader)
+Mesh::Mesh(float vertices[])
 {
-     unsigned int diffuseNr = 1;
+    this->vertices.resize(36);
+    memcpy(&(this->vertices[0]), vertices, 36 * 8 * sizeof(float));
+    setupMesh();
+}
+
+void Mesh::Draw(Shader* shader)
+{
+    unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
-    for(unsigned int i = 0; i < textures.size(); i++)
+    for (unsigned int i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i); // 在绑定之前激活相应的纹理单元
-        // 获取纹理序号（diffuse_textureN 中的 N）
-        string number;
-        string name = textures[i].type;
-        if(name == "texture_diffuse")
-            number = std::to_string(diffuseNr++);
-        else if(name == "texture_specular")
-            number = std::to_string(specularNr++);
+        //    glActiveTexture(GL_TEXTURE0 + i); // 在绑定之前激活相应的纹理单元
+        //    // 获取纹理序号（diffuse_textureN 中的 N）
+        //    string number;
+        //    string name = textures[i].type;
+        //    if(name == "texture_diffuse")
+        //        number = std::to_string(diffuseNr++);
+        //    else if(name == "texture_specular")
+        //        number = std::to_string(specularNr++);
 
-        shader.setFloat(("material." + name + number).c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        //    shader.setFloat(("material." + name + number).c_str(), i);
+        //    glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        //}
+        //glActiveTexture(GL_TEXTURE0);
+
+        //// 绘制网格
+        //glBindVertexArray(VAO);
+        //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        //glBindVertexArray(0);
+        if (textures[i].type == "texture_diffuse")
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            shader->Setuniform1i("material.diffuse", 0);
+        }
+        else if (textures[i].type == "texture_specular")
+        {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            shader->Setuniform1i("material.specular", 0);
+        }
+
+        
     }
-    glActiveTexture(GL_TEXTURE0);
-
-    // 绘制网格
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);;
+        glBindVertexArray(0);
 }
 
 void Mesh::setupMesh()
@@ -48,9 +73,9 @@ void Mesh::setupMesh()
 
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    /*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
-        &indices[0], GL_STATIC_DRAW);
+        &indices[0], GL_STATIC_DRAW);*/
 
     // 顶点位置
     glEnableVertexAttribArray(0);
